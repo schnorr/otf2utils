@@ -26,7 +26,7 @@
 #include <search.h>
 
 #define PROGRAM "otf22csv"
-#define MAX_IMBRICATION 10
+#define MAX_IMBRICATION 250
 #define MAX_RANKS 2048
 #define MAX_METRICS 10
 
