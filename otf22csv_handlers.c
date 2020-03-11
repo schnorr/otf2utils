@@ -117,41 +117,41 @@ OTF2_CallbackCode otf22csv_global_def_system_tree_node_domain( void* userData, O
 OTF2_CallbackCode otf22csv_enter (OTF2_LocationRef locationID, OTF2_TimeStamp time, void *userData, OTF2_AttributeList* attributes, OTF2_RegionRef regionID)
 {
   otf2paje_t* data = (otf2paje_t*) userData;
-
-  /* copy from metrics to enter_metrics */
-  //printf("%d %s ", locationID, __FUNCTION__);
-  for (int i = 0; i < data->metrics_n[locationID]; i++){
-    data->enter_metrics[locationID][i] = data->metrics[locationID][i];
-    //printf("%d (%d) ",
-//	   data->enter_metrics[locationID][i].id,
-//	   data->enter_metrics[locationID][i].value);
-  }
-  // printf("\n");
-  data->enter_metrics_n[locationID] = data->metrics_n[locationID];
-  /* reset metrics */
-  data->metrics_n[locationID] = 0;
+  int index;
 
   //search the correct index of the locationID
-  int i;
-  for (i = 0; i < data->locations->size; i++){
-    if (data->locations->members[i] == locationID) break;
+  for (index = 0; index < data->locations->size; index++){
+    if (data->locations->members[index] == locationID) break;
   }
 
+  /* copy from metrics to enter_metrics */
+  //printf("%d %s ", index, __FUNCTION__);
+  for (int i = 0; i < data->metrics_n[index]; i++){
+    data->enter_metrics[index][i] = data->metrics[index][i];
+    //printf("%d (%d) ",
+//	   data->enter_metrics[index][i].id,
+//	   data->enter_metrics[index][i].value);
+  }
+  // printf("\n");
+  data->enter_metrics_n[index] = data->metrics_n[index];
+  /* reset metrics */
+  data->metrics_n[index] = 0;
+
   //Allocate memory if that is not yet the case
-  if (data->last_enter_metric[i] == NULL){
-    data->last_enter_metric[i] = malloc(MAX_IMBRICATION * sizeof(uint64_t**));
+  if (data->last_enter_metric[index] == NULL){
+    data->last_enter_metric[index] = malloc(MAX_IMBRICATION * sizeof(uint64_t**));
     for (uint8_t j = 0; j < MAX_IMBRICATION; j++){
-      data->last_enter_metric[i][j] = malloc(data->number_of_metrics * sizeof(uint64_t));
+      data->last_enter_metric[index][j] = malloc(data->number_of_metrics * sizeof(uint64_t));
     }
   }
   
   //Define last "enter" event metrics in the current imbrication level
   for ( uint8_t j = 0; j < data->number_of_metrics; j++ ){
-    data->last_enter_metric[i][data->last_imbric[i]][j] = data->last_metric[i][j];
+    data->last_enter_metric[index][data->last_imbric[index]][j] = data->last_metric[index][j];
   }
   
-  data->last_timestamp[i][data->last_imbric[i]] = time_to_seconds(time, data->time_resolution);
-  data->last_imbric[i]++;
+  data->last_timestamp[index][data->last_imbric[index]] = time_to_seconds(time, data->time_resolution);
+  data->last_imbric[index]++;
   return OTF2_CALLBACK_SUCCESS;
 }
 
@@ -159,56 +159,55 @@ OTF2_CallbackCode otf22csv_leave (OTF2_LocationRef locationID, OTF2_TimeStamp ti
 {
   otf2paje_t* data = (otf2paje_t*) userData;
   const char *state_name = string_hash[region_name_map[regionID]];
+  int index;
+  //search the correct index of the locationID
+  for (index = 0; index < data->locations->size; index++){
+    if (data->locations->members[index] == locationID) break;
+  }
 
   /* copy from metrics to leave_metrics */
-  //printf("%d %s ", locationID, __FUNCTION__);
-  for (int i = 0; i < data->metrics_n[locationID]; i++){
-    data->leave_metrics[locationID][i] = data->metrics[locationID][i];
+  //printf("%d %s ", index, __FUNCTION__);
+  for (int i = 0; i < data->metrics_n[index]; i++){
+    data->leave_metrics[index][i] = data->metrics[index][i];
     //printf("%d (%d) ",
-//	   data->leave_metrics[locationID][i].id,
-//	   data->leave_metrics[locationID][i].value);
+//	   data->leave_metrics[index][i].id,
+//	   data->leave_metrics[index][i].value);
   }
   //printf("\n");
-  data->leave_metrics_n[locationID] = data->metrics_n[locationID];
+  data->leave_metrics_n[index] = data->metrics_n[index];
   /* reset metrics */
-  data->metrics_n[locationID] = 0;
+  data->metrics_n[index] = 0;
 
   /* compute the difference of the enter/leave metrics */
-  if (data->enter_metrics_n[locationID] != data->leave_metrics_n[locationID]){
+  if (data->enter_metrics_n[index] != data->leave_metrics_n[index]){
     printf("Error, number of metrics in enter and leave are different.\n");
     exit(1);
   }
   metric_t diff_metric[MAX_METRICS];
-  int n = data->enter_metrics_n[locationID];
-  //printf("%d %s DIFF ", locationID, __FUNCTION__);
+  int n = data->enter_metrics_n[index];
+  //printf("%d %s DIFF ", index, __FUNCTION__);
   for (int i = 0; i < n; i++){
-    if (data->leave_metrics[locationID][i].id != data->enter_metrics[locationID][i].id){
+    if (data->leave_metrics[index][i].id != data->enter_metrics[index][i].id){
       printf("Error, metrics are unaligned in enter and leave.\n");
       exit(1);
     }
-    diff_metric[i].id = data->leave_metrics[locationID][i].id;
-    diff_metric[i].value = data->leave_metrics[locationID][i].value -
-      data->enter_metrics[locationID][i].value;
+    diff_metric[i].id = data->leave_metrics[index][i].id;
+    diff_metric[i].value = data->leave_metrics[index][i].value -
+      data->enter_metrics[index][i].value;
     //printf("%d (%d) ", diff_metric[i].id, diff_metric[i].value);
   }
   //printf("\n");
 
-  //search the correct index of the locationID
-  int i;
-  for (i = 0; i < data->locations->size; i++){
-    if (data->locations->members[i] == locationID) break;
-  }
-
   //Reduce imbrication since we are back one level
   //This has to be done prior to everything
-  data->last_imbric[i]--;
-  double before = data->last_timestamp[i][data->last_imbric[i]];
+  data->last_imbric[index]--;
+  double before = data->last_timestamp[index][data->last_imbric[index]];
   double now = time_to_seconds(time, data->time_resolution);
 
   //Get the last_metric values
-  uint64_t *my_last_metrics = data->last_metric[i];
+  uint64_t *my_last_metrics = data->last_metric[index];
   //Get the last "enter" metric values
-  uint64_t *my_last_enter_metrics = data->last_enter_metric[i][data->last_imbric[i]];
+  uint64_t *my_last_enter_metrics = data->last_enter_metric[index][data->last_imbric[index]];
   //Calculate the difference of these metrics
   uint64_t *diff = malloc(sizeof(uint64_t) * data->number_of_metrics);
   for ( uint8_t j = 0; j < data->number_of_metrics; j++ ){
@@ -216,7 +215,7 @@ OTF2_CallbackCode otf22csv_leave (OTF2_LocationRef locationID, OTF2_TimeStamp ti
   }
   
   if (!arguments.dummy){
-    printf("%d,%f,%f,%d,%s", i, before, now, data->last_imbric[i], state_name);
+    printf("%d,%f,%f,%d,%s", index, before, now, data->last_imbric[index], state_name);
     if (n == 0){
       printf("\n");
     }else{
@@ -232,33 +231,33 @@ OTF2_CallbackCode otf22csv_leave (OTF2_LocationRef locationID, OTF2_TimeStamp ti
     }
   }
   free(diff);
-  data->last_timestamp[i][data->last_imbric[i]] = now;
+  data->last_timestamp[index][data->last_imbric[index]] = now;
   return OTF2_CALLBACK_SUCCESS;
 }
 
 OTF2_CallbackCode otf22csv_print_metric( OTF2_LocationRef locationID, OTF2_TimeStamp time, void* userData, OTF2_AttributeList* attributes, OTF2_MetricRef metric, uint8_t numberOfMetrics, const OTF2_Type* typeIDs, const OTF2_MetricValue* metricValues )
 {
   otf2paje_t* data = (otf2paje_t*) userData;
+  int index;
 
   //search the correct index of the locationID
-  int i;
-  for (i = 0; i < data->locations->size; i++){
-    if (data->locations->members[i] == locationID) break;
+  for (index = 0; index < data->locations->size; index++){
+    if (data->locations->members[index] == locationID) break;
   }
 
   //register metric for later utilization
-  int n = data->metrics_n[locationID];
-  data->metrics[locationID][n].id = metric;
-  data->metrics[locationID][n].value = metricValues[0].unsigned_int;
-  data->metrics_n[locationID]++;
+  int n = data->metrics_n[index];
+  data->metrics[index][n].id = metric;
+  data->metrics[index][n].value = metricValues[0].unsigned_int;
+  data->metrics_n[index]++;
 
-  //printf("%d %s %d %d %d (%d)\n", locationID, __FUNCTION__, metric, n, data->metrics[locationID][n].id, data->metrics[locationID][n].value);
+  //printf("%d %s %d %d %d (%d)\n", index, __FUNCTION__, metric, n, data->metrics[index][n].id, data->metrics[index][n].value);
 
   data->number_of_metrics = numberOfMetrics;
-  if (data->last_metric[i] == NULL){
-    data->last_metric[i] = malloc(data->number_of_metrics * sizeof(uint64_t));
+  if (data->last_metric[index] == NULL){
+    data->last_metric[index] = malloc(data->number_of_metrics * sizeof(uint64_t));
   }
-  uint64_t *my_metrics = data->last_metric[i];
+  uint64_t *my_metrics = data->last_metric[index];
    
   for ( uint8_t j = 0; j < numberOfMetrics; j++ ){
     my_metrics[j] = metricValues[j].unsigned_int;
