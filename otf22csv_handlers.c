@@ -215,7 +215,29 @@ OTF2_CallbackCode otf22csv_leave (OTF2_LocationRef locationID, OTF2_TimeStamp ti
   }
   
   if (!arguments.dummy){
-    printf("%d,%f,%f,%d,%s", index, before, now, data->last_imbric[index], state_name);
+    int i;
+    char *safe_state_name = NULL;
+    //verify if there are commas
+    for (i = 0; i < strlen(state_name); i++) {
+      if(state_name[i] == ',') break;
+    }
+    if (i == strlen(state_name)) {
+      //there are NO commas
+      safe_state_name = (char*)malloc((strlen(state_name)+1) * sizeof(char));
+      bzero(safe_state_name, strlen(state_name)+1);
+      strncpy(safe_state_name, state_name, strlen(state_name));
+    }else{
+      //there are commas, put double quotes
+      safe_state_name = (char*)malloc((strlen(state_name)+3) * sizeof(char));
+      bzero(safe_state_name, strlen(state_name)+2);
+      safe_state_name[0] = '\"';
+      strncpy(safe_state_name+1, state_name, strlen(state_name));
+      int len = strlen(safe_state_name);
+      safe_state_name[len] = '\"';
+      safe_state_name[len+1] = '\0';
+    }
+    printf("%d,%f,%f,%d,%s", index, before, now, data->last_imbric[index], safe_state_name);
+    free(safe_state_name);
     if (n == 0){
       printf("\n");
     }else{
