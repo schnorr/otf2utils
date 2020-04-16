@@ -177,5 +177,26 @@ int main (int argc, char **argv)
   }
 
   OTF2_Reader_Close (reader);
+  //These *_Clear functions caused Invalid writes
+  //OTF2_GlobalDefReaderCallbacks_Clear(def_callbacks);
+  //OTF2_GlobalEvtReaderCallbacks_Clear(evt_callbacks);
+  for (int i = 0; i < user_data->locations->size; i++) {
+    free(user_data->last_metric[i]);
+  }
+  free(user_data->last_metric);
+  for (int i = 0; i < user_data->locations->size; i++) {
+    for (int j = 0; j < MAX_IMBRICATION; j++){
+      free(user_data->last_enter_metric[i][j]);
+    }
+    free(user_data->last_enter_metric[i]);
+  }
+  free(user_data->last_enter_metric);
+  free(user_data->last_imbric);
+  for (int i = 0; i < user_data->locations->size; i++) {
+    free(user_data->last_timestamp[i]);
+  }
+  free(user_data->last_timestamp);
+  free(user_data->locations);
+  free(user_data);
   return 0;
 }
