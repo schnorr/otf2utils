@@ -236,7 +236,7 @@ OTF2_CallbackCode otf22csv_leave (OTF2_LocationRef locationID, OTF2_TimeStamp ti
       safe_state_name[len] = '\"';
       safe_state_name[len+1] = '\0';
     }
-    printf("%d,%f,%f,%d,%s", locationID, before, now, data->last_imbric[index], safe_state_name);
+    printf("%ld,%f,%f,%d,%s", locationID, before, now, data->last_imbric[index], safe_state_name);
     free(safe_state_name);
     if (n == 0){
       printf("\n");
