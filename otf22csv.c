@@ -139,6 +139,13 @@ int main (int argc, char **argv)
   size_t i;
   for ( i = 0; i < user_data->locations->size; i++ ){
     OTF2_DefReader* def_reader = OTF2_Reader_GetDefReader (reader, user_data->locations->members[i]);
+    if (def_reader == NULL) {
+      fprintf(stderr,
+	      "[%s] at %s, "
+	      "creation of OTF2_Reader_GetDefReader failed\n",
+	      PROGRAM, __FUNCTION__);
+      return 1;
+    }
     uint64_t definitions_read = 0;
     OTF2_Reader_ReadAllLocalDefinitions (reader, def_reader, &definitions_read);
     OTF2_Reader_CloseDefReader (reader, def_reader);
