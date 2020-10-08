@@ -73,7 +73,7 @@ int main (int argc, char **argv)
   // Keep the last timestamp of each location on each level (one stack per location)
   int s = sizeof(double*) * num_locations;
   user_data->last_timestamp = malloc (s);
-  for (uint8_t j = 0; j < num_locations; j++){
+  for (int j = 0; j < num_locations; j++){
     int s = sizeof(double) * MAX_IMBRICATION;
     user_data->last_timestamp[j] = malloc(s);
     bzero(user_data->last_timestamp[j], s);
