@@ -26,6 +26,29 @@ static int string_hash_current_size = 0;
 static int *region_name_map = NULL;
 static int region_name_map_current_size = 0;
 
+/* trim ws */
+// See https://stackoverflow.com/questions/656542/trim-a-string-in-c
+char *ltrim(char *s)
+{
+    while(isspace(*s)) s++;
+    return s;
+}
+
+char *rtrim(char *s)
+{
+    char* back = s + strlen(s);
+    while(isspace(*--back));
+    *(back+1) = '\0';
+    return s;
+}
+
+char *trim(char *s)
+{
+    return rtrim(ltrim(s)); 
+}
+/* trim ws end */
+
+
 /* time_to_seconds */
 static double time_to_seconds(double time, double resolution)
 {
@@ -245,7 +268,13 @@ OTF2_CallbackCode otf22csv_leave (OTF2_LocationRef locationID, OTF2_TimeStamp ti
       printf(",");
       for(uint8_t j = 0; j < data->parameters_n[index]; j++ ){
 	int aux = data->parameters[index][j];
-	printf("%s", string_hash[aux]);
+	char *safe_parameter_value = NULL, *safe2 = NULL;
+	//Remove spaces at the end
+	safe_parameter_value = malloc(strlen(string_hash[aux]));
+	strncpy(safe_parameter_value, string_hash[aux], strlen(string_hash[aux]));
+	safe2 = trim(safe_parameter_value);
+	printf("%s", safe2);
+	free(safe_parameter_value);
 	if(j+1 < n){
 	  printf(",");
 	}
