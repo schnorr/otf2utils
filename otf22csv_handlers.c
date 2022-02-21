@@ -286,3 +286,15 @@ OTF2_CallbackCode otf22csv_print_metric( OTF2_LocationRef locationID, OTF2_TimeS
   }
   return OTF2_CALLBACK_SUCCESS;
 }
+
+
+OTF2_CallbackCode otf22csv_global_def_parameter ( void*              userData,
+						  OTF2_ParameterRef  self,
+						  OTF2_StringRef     name,
+						  OTF2_ParameterType parameterType )
+{
+  parameter_hash_current_size = self + 1;
+  parameter_hash = (int*)realloc (parameter_hash, parameter_hash_current_size*sizeof(int));
+  parameter_hash[self] = name;
+  //printf("%s %d -> %d -> %s\n", __func__, self, name, string_hash[name]);
+  return OTF2_CALLBACK_SUCCESS;

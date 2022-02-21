@@ -97,6 +97,7 @@ int main (int argc, char **argv)
   OTF2_GlobalDefReaderCallbacks_SetStringCallback (def_callbacks, otf22csv_global_def_string);
   OTF2_GlobalDefReaderCallbacks_SetRegionCallback (def_callbacks, otf22csv_global_def_region);
   OTF2_GlobalDefReaderCallbacks_SetClockPropertiesCallback (def_callbacks, otf22csv_global_def_clock_properties);
+  OTF2_GlobalDefReaderCallbacks_SetParameterCallback (def_callbacks, otf22csv_global_def_parameter);
 
   if (arguments.hostfile){
     OTF2_GlobalDefReaderCallbacks_SetLocationGroupCallback (def_callbacks, otf22csv_global_def_location_group_hostfile);

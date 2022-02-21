@@ -116,5 +116,9 @@ OTF2_CallbackCode otf22csv_global_def_system_tree_node_domain( void* userData, O
 
 OTF2_CallbackCode otf22csv_print_metric( OTF2_LocationRef location, OTF2_TimeStamp time, void* userData, OTF2_AttributeList* attributes, OTF2_MetricRef metric, uint8_t numberOfMetrics, const OTF2_Type* typeIDs, const OTF2_MetricValue* metricValues );
 
+OTF2_CallbackCode otf22csv_global_def_parameter ( void*              userData,
+						  OTF2_ParameterRef  self,
+						  OTF2_StringRef     name,
+						  OTF2_ParameterType parameterType );
 
 #endif
