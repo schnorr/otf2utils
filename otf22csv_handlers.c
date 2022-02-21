@@ -298,3 +298,30 @@ OTF2_CallbackCode otf22csv_global_def_parameter ( void*              userData,
   parameter_hash[self] = name;
   //printf("%s %d -> %d -> %s\n", __func__, self, name, string_hash[name]);
   return OTF2_CALLBACK_SUCCESS;
+}
+
+OTF2_CallbackCode otf22csv_parameter_string ( OTF2_LocationRef    locationID,
+					      OTF2_TimeStamp      time,
+					      void*               userData,
+					      OTF2_AttributeList* attributeList,
+					      OTF2_ParameterRef   parameter,
+					      OTF2_StringRef      string )
+{
+  otf2paje_t* data = (otf2paje_t*) userData;
+  int index;
+
+  //search the correct index of the locationID
+  for (index = 0; index < data->locations->size; index++){
+    if (data->locations->members[index] == locationID) break;
+  }
+
+  int position = data->parameters_n[index];
+  if(position > MAX_PARAMETERS) {
+    fprintf(stderr, "Increase MAX_PARAMETERS to at least %d. Recompile.\n", position);
+    exit(1);
+  }
+  data->parameters[index][position] = string;
+  data->parameters_n[index]++;
+  //printf("PARAMETER STRING %s %ld %s\n", __func__, locationID, string_hash[string]);
+  return OTF2_CALLBACK_SUCCESS;
+}

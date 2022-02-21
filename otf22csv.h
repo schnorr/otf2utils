@@ -29,6 +29,7 @@
 #define MAX_IMBRICATION 250
 #define MAX_RANKS 2048
 #define MAX_METRICS 10
+#define MAX_PARAMETERS 10
 
 #define MY_INPUT_SIZE 200
 
@@ -62,6 +63,10 @@ struct otf2paje_s
   metric_t enter_metrics[MAX_RANKS][MAX_METRICS];
   int leave_metrics_n[MAX_RANKS];
   metric_t leave_metrics[MAX_RANKS][MAX_METRICS];
+
+  // parameters (all indexed by rank number)
+  int parameters_n[MAX_RANKS];
+  int parameters[MAX_RANKS][MAX_PARAMETERS];
 
   struct vector
   {
@@ -121,4 +126,10 @@ OTF2_CallbackCode otf22csv_global_def_parameter ( void*              userData,
 						  OTF2_StringRef     name,
 						  OTF2_ParameterType parameterType );
 
+OTF2_CallbackCode otf22csv_parameter_string ( OTF2_LocationRef    locationID,
+					      OTF2_TimeStamp      time,
+					      void*               userData,
+					      OTF2_AttributeList* attributeList,
+					      OTF2_ParameterRef   parameter,
+					      OTF2_StringRef      string );
 #endif
