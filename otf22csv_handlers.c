@@ -26,9 +26,6 @@ static int string_hash_current_size = 0;
 static int *region_name_map = NULL;
 static int region_name_map_current_size = 0;
 
-static char **type_tree_hash = NULL;
-static int type_tree_current_size = 0;
-
 /* time_to_seconds */
 static double time_to_seconds(double time, double resolution)
 {
