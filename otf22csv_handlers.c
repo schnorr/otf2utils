@@ -238,6 +238,18 @@ OTF2_CallbackCode otf22csv_leave (OTF2_LocationRef locationID, OTF2_TimeStamp ti
     }
     printf("%ld,%f,%f,%d,%s", locationID, before, now, data->last_imbric[index], safe_state_name);
     free(safe_state_name);
+
+    if (data->parameters_n[index] != 0){
+      printf(",");
+      for(uint8_t j = 0; j < data->parameters_n[index]; j++ ){
+	int aux = data->parameters[index][j];
+	printf("%s", string_hash[aux]);
+	if(j+1 < n){
+	  printf(",");
+	}
+      }
+      data->parameters_n[index] = 0;
+    }
     if (n == 0){
       printf("\n");
     }else{
