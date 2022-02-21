@@ -17,10 +17,15 @@
 #include "otf22csv.h"
 #include <inttypes.h>
 
+static int *parameter_hash = NULL;
+static int parameter_hash_current_size = 0;
+
 static char **string_hash = NULL;
 static int string_hash_current_size = 0;
+
 static int *region_name_map = NULL;
 static int region_name_map_current_size = 0;
+
 static char **type_tree_hash = NULL;
 static int type_tree_current_size = 0;
 
