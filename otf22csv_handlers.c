@@ -266,20 +266,23 @@ OTF2_CallbackCode otf22csv_leave (OTF2_LocationRef locationID, OTF2_TimeStamp ti
 
     if (data->parameters_n[index] != 0){
       printf(",");
-      for(uint8_t j = 0; j < data->parameters_n[index]; j++ ){
-	int aux = data->parameters[index][j];
-	char *safe_parameter_value = NULL, *safe2 = NULL;
-	//Remove spaces at the end
-	safe_parameter_value = malloc(strlen(string_hash[aux]));
-	strncpy(safe_parameter_value, string_hash[aux], strlen(string_hash[aux]));
-	safe2 = trim(safe_parameter_value);
-	printf("%s", safe2);
-	free(safe_parameter_value);
-	if(j+1 < n){
-	  printf(",");
-	}
+      //for(uint8_t j = 0; j < data->parameters_n[index]; j++ ){
+      if(data->parameters_n[index] > 0){
+
+        uint8_t j = data->parameters_n[index] - 1;
+      	int aux = data->parameters[index][j];
+        char *safe_parameter_value = NULL, *safe2 = NULL;
+        //Remove spaces at the end
+        safe_parameter_value = malloc(strlen(string_hash[aux]));
+        strncpy(safe_parameter_value, string_hash[aux], strlen(string_hash[aux]));
+        safe2 = trim(safe_parameter_value);
+        printf("%s", safe2);
+        free(safe_parameter_value);
+        if(j+1 < n){
+          printf(",");
+        }
+        data->parameters_n[index] = j;
       }
-      data->parameters_n[index] = 0;
     }
     if (n == 0){
       printf("\n");
@@ -366,5 +369,6 @@ OTF2_CallbackCode otf22csv_parameter_string ( OTF2_LocationRef    locationID,
   data->parameters[index][position] = string;
   data->parameters_n[index]++;
   //printf("PARAMETER STRING %s %ld %s\n", __func__, locationID, string_hash[string]);
+
   return OTF2_CALLBACK_SUCCESS;
 }
