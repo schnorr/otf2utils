@@ -50,6 +50,11 @@ typedef struct {
   uint64_t value;
 }metric_t;
 
+/* Data structure to keep parameter values for one location */
+typedef struct {
+  int *parameter; //one parameter per level
+}stack_t;
+
 /* Data utilities for convertion */
 struct otf2paje_s
 {
@@ -64,9 +69,8 @@ struct otf2paje_s
   int leave_metrics_n[MAX_RANKS];
   metric_t leave_metrics[MAX_RANKS][MAX_METRICS];
 
-  // parameters (all indexed by rank number)
-  int parameters_n[MAX_RANKS];
-  int parameters[MAX_RANKS][MAX_PARAMETERS];
+  // parameters (all indexed by rank number and level of imbrication)
+  stack_t *parameter_stack;
 
   struct vector
   {

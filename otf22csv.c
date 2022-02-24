@@ -91,6 +91,9 @@ int main (int argc, char **argv)
   user_data->last_enter_metric = malloc (sp);
   bzero(user_data->last_enter_metric, sp);
 
+  // Keep parameter string for each location and imbrication level
+  user_data->parameter_stack = calloc(num_locations, sizeof(stack_t));
+
   /* Define definition callbacks. */
   OTF2_GlobalDefReaderCallbacks *def_callbacks = OTF2_GlobalDefReaderCallbacks_New();
   OTF2_GlobalDefReaderCallbacks_SetLocationCallback (def_callbacks, otf22csv_global_def_location);
@@ -206,6 +209,7 @@ int main (int argc, char **argv)
   }
   free(user_data->last_timestamp);
   free(user_data->locations);
+  free(user_data->parameter_stack);
   free(user_data);
   return 0;
 }
