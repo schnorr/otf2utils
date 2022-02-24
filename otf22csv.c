@@ -163,7 +163,7 @@ int main (int argc, char **argv)
   OTF2_GlobalEvtReaderCallbacks_SetEnterCallback( evt_callbacks, otf22csv_enter );
   OTF2_GlobalEvtReaderCallbacks_SetLeaveCallback( evt_callbacks, otf22csv_leave );
   OTF2_GlobalEvtReaderCallbacks_SetMetricCallback( evt_callbacks, otf22csv_print_metric );
-  OTF2_EvtReaderCallbacks_SetParameterStringCallback( evt_callbacks, otf22csv_parameter_string );
+  OTF2_GlobalEvtReaderCallbacks_SetParameterStringCallback( evt_callbacks, otf22csv_parameter_string );
 
 
   /* Get global event reader. */
